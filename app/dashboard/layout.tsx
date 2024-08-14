@@ -11,10 +11,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { redirect } from "next/navigation";
+import {
+  RegisterLink,
+  LoginLink,
+  LogoutLink,
+} from "@kinde-oss/kinde-auth-nextjs/components";
 
-export default function DashboardLayout({ children }: { children: ReactNode }) {
+export default async function DashboardLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (!user || user.email !== "heshmati74@gmail.com") {
+    return redirect("/");
+  }
+
   return (
-    <div className="flex w-full flex-col max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="flex w-full flex-col 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
       <header className="sticky top-0 flex h-16 items-center justify-between gap-4 border-b bg-white">
         <nav className="hidden font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
           <DashboardNavigation />
@@ -46,7 +64,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <LogoutLink className="cursor-pointer">Logout</LogoutLink>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </header>

@@ -33,17 +33,23 @@ model Product {
   category    Category
   isFeatured  Boolean @default(false)
   
-  createdAt DateTime @default(now())
+  createdAt   DateTime @default(now())
 }
-
 enum ProductStatus{
   draft
   published
   archived
 }
-
 enum Category{
   men
   women
   kids
+}
+
+model Banner {
+  id          String @id @default(uuid())
+  title       String   
+  image       String
+  
+  createdAt   DateTime @default(now())
 }

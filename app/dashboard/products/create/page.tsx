@@ -205,7 +205,7 @@ export default function ProductCreateRoute() {
                   className={`${
                     fields.images.errors && "border border-red-500"
                   }`}
-                  endpoint="imageUploader"
+                  endpoint="productImageUploader"
                   onClientUploadComplete={(res) => {
                     setImages(res.map((r) => r.url));
                   }}

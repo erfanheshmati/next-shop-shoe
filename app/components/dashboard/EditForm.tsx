@@ -1,6 +1,6 @@
 "use client";
 
-import { createProduct, editProduct } from "@/app/actions";
+import { editProduct } from "@/app/actions";
 import { categories } from "@/app/lib/categories";
 import { UploadDropzone } from "@/app/lib/uploadthing";
 import { productSchema } from "@/app/lib/zodSchemas";
@@ -222,7 +222,7 @@ export function EditForm({ data }: iAppProps) {
                   className={`${
                     fields.images.errors && "border border-red-500"
                   }`}
-                  endpoint="imageUploader"
+                  endpoint="productImageUploader"
                   onClientUploadComplete={(res) => {
                     setImages(res.map((r) => r.url));
                   }}

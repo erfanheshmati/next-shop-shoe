@@ -31,14 +31,14 @@ export function ProductCard({ item }: iAppProps) {
                   src={image}
                   alt="Product Image"
                   fill
-                  className="object-cover w-full h-full rounded-lg"
+                  className="object-cover w-full h-full rounded-t-lg"
                 />
               </div>
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="ml-16" />
-        <CarouselNext className="mr-16" />
+        <CarouselPrevious className="ml-14" />
+        <CarouselNext className="mr-14" />
       </Carousel>
 
       <div className="flex justify-between items-center mt-2">
@@ -51,7 +51,7 @@ export function ProductCard({ item }: iAppProps) {
         {item.description}
       </p>
       <Button asChild className="mt-4 w-full">
-        <Link href={`/products/${item.id}`}>Learn More</Link>
+        <Link href={`/product/${item.id}`}>See More</Link>
       </Button>
     </div>
   );

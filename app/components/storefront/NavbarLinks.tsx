@@ -25,7 +25,7 @@ export const navbarLinks = [
 
 export function NavbarLinks() {
   return (
-    <div className="hidden md:flex justify-center items-center gap-x-8 ml-12">
+    <div className="hidden md:flex justify-center items-center gap-x-8">
       {navbarLinks.map((item) => (
         <Link key={item.id} href={item.href} className="font-medium">
           {item.name}

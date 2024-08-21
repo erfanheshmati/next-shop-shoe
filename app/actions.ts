@@ -5,6 +5,9 @@ import { redirect } from "next/navigation";
 import { parseWithZod } from "@conform-to/zod";
 import { bannerSchema, productSchema } from "./lib/zodSchemas";
 import prisma from "./lib/db";
+import { redis } from "./lib/redis";
+import { Cart } from "./lib/interfaces";
+import { revalidatePath } from "next/cache";
 
 /* ------ Product Actions ------ */
 export async function createProduct(prevState: unknown, formData: FormData) {
@@ -141,4 +144,98 @@ export async function deleteBanner(formData: FormData) {
   });
 
   redirect("/dashboard/banner");
+}
+
+/* ------ Shopping Cart Actions ------ */
+export async function addItem(productId: string) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (!user) {
+    return redirect("/");
+  }
+
+  let cart: Cart | null = await redis.get(`cart-${user.id}`);
+
+  const selectedProduct = await prisma.product.findUnique({
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      images: true,
+    },
+    where: {
+      id: productId,
+    },
+  });
+
+  if (!selectedProduct) {
+    throw new Error("No product with this id");
+  }
+
+  let myCart = {} as Cart;
+
+  if (!cart || !cart.items) {
+    myCart = {
+      userId: user.id,
+      items: [
+        {
+          id: selectedProduct.id,
+          name: selectedProduct.name,
+          price: selectedProduct.price,
+          image: selectedProduct.images[0],
+          quantity: 1,
+        },
+      ],
+    };
+  } else {
+    let itemFound = false;
+
+    myCart.items = cart.items.map((item) => {
+      if (item.id === productId) {
+        itemFound = true;
+        item.quantity += 1;
+      }
+
+      return item;
+    });
+
+    if (!itemFound) {
+      myCart.items.push({
+        id: selectedProduct.id,
+        name: selectedProduct.name,
+        price: selectedProduct.price,
+        image: selectedProduct.images[0],
+        quantity: 1,
+      });
+    }
+  }
+
+  await redis.set(`cart-${user.id}`, myCart);
+
+  revalidatePath("/", "layout");
+}
+
+export async function deleteItem(formData: FormData) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (!user) {
+    return redirect("/");
+  }
+
+  const productId = formData.get("productId");
+
+  let cart: Cart | null = await redis.get(`cart-${user.id}`);
+
+  if (cart && cart.items) {
+    const updateCart: Cart = {
+      userId: user.id,
+      items: cart.items.filter((item) => item.id !== productId),
+    };
+
+    await redis.set(`cart-${user.id}`, updateCart);
+  }
+
+  revalidatePath("/cart");
 }

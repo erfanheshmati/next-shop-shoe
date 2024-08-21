@@ -5,10 +5,15 @@ import { ShoppingBagIcon } from "lucide-react";
 import { UserDropdown } from "./UserDropdown";
 import { Button } from "@/components/ui/button";
 import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
+import { redis } from "@/app/lib/redis";
+import { Cart } from "@/app/lib/interfaces";
 
 export async function Navbar() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
+
+  const cart: Cart | null = await redis.get(`cart-${user?.id}`);
+  const total = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   return (
     <nav className="w-full 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
@@ -27,11 +32,11 @@ export async function Navbar() {
           <>
             <Link
               href="/cart"
-              className="group p-2 flex items-center mr-2 relative"
+              className="group p-2 flex items-center mt-1 mr-4 relative"
             >
-              <ShoppingBagIcon className="h-6 w-6 text-gray-400 group-hover:text-gray-600" />
-              <span className="text-xs font-medium text-white absolute top-0 right-0 bg-primary rounded-full px-1">
-                9
+              <ShoppingBagIcon className="h-6 w-6 text-gray-500 group-hover:text-gray-800" />
+              <span className="text-xs font-medium text-white absolute top-0 right-0 bg-primary rounded-full px-1.5 py-0.5">
+                {total}
               </span>
             </Link>
 

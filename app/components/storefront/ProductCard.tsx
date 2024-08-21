@@ -31,7 +31,7 @@ export function ProductCard({ item }: iAppProps) {
                   src={image}
                   alt="Product Image"
                   fill
-                  className="object-cover w-full h-full rounded-t-lg"
+                  className="object-cover w-full h-full rounded-lg"
                 />
               </div>
             </CarouselItem>

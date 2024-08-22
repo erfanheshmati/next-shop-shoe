@@ -1,5 +1,5 @@
-import { deleteItem } from "@/app/actions";
-import { DeleteButton } from "@/app/components/SubmitButton";
+import { checkOut, deleteItem } from "@/app/actions";
+import { CheckoutButton, DeleteButton } from "@/app/components/SubmitButton";
 import { Cart } from "@/app/lib/interfaces";
 import { redis } from "@/app/lib/redis";
 import { Button } from "@/components/ui/button";
@@ -80,9 +80,9 @@ export default async function CartRoute() {
               <p>${new Intl.NumberFormat("en-US").format(totalPrice)}</p>
             </div>
 
-            <Button size="lg" className="w-full mt-5">
-              Checkout
-            </Button>
+            <form action={checkOut}>
+              <CheckoutButton />
+            </form>
           </div>
         </div>
       )}

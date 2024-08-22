@@ -8,6 +8,8 @@ import prisma from "./lib/db";
 import { redis } from "./lib/redis";
 import { Cart } from "./lib/interfaces";
 import { revalidatePath } from "next/cache";
+import { stripe } from "./lib/stripe";
+import Stripe from "stripe";
 
 /* ------ Product Actions ------ */
 export async function createProduct(prevState: unknown, formData: FormData) {
@@ -238,4 +240,43 @@ export async function deleteItem(formData: FormData) {
   }
 
   revalidatePath("/cart");
+}
+
+/* ------ Payment Actions ------ */
+export async function checkOut() {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (!user) {
+    return redirect("/");
+  }
+
+  let cart: Cart | null = await redis.get(`cart-${user.id}`);
+
+  if (cart && cart.items) {
+    const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] =
+      cart.items.map((item) => ({
+        price_data: {
+          currency: "usd",
+          unit_amount: item.price * 100,
+          product_data: {
+            name: item.name,
+            images: [item.image],
+          },
+        },
+        quantity: item.quantity,
+      }));
+
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      line_items: lineItems,
+      success_url: "http://localhost:3000/payment/success",
+      cancel_url: "http://localhost:3000/payment/cancel",
+      metadata: {
+        userId: user.id,
+      },
+    });
+
+    return redirect(session.url as string);
+  }
 }

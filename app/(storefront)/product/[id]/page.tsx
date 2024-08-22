@@ -7,6 +7,7 @@ import { StarIcon } from "lucide-react";
 import { notFound } from "next/navigation";
 
 async function getData(productId: string) {
+  // await new Promise((resolve) => setTimeout(resolve, 3000));
   const data = await prisma.product.findUnique({
     where: {
       id: productId,

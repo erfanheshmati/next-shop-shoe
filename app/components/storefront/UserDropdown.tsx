@@ -22,15 +22,12 @@ export function UserDropdown({ email, name, userImage }: iAppProps) {
   const getInitials = (name: string) => {
     // Split the full name by space
     const nameParts = name.trim().split(" ");
-
     // Assuming the name has only two parts: first name and last name
     const firstName = nameParts[0];
     const lastName = nameParts[1];
-
     // Get the first letter of the first name and the last name
     const firstInitial = firstName.charAt(0).toUpperCase();
     const lastInitial = lastName.charAt(0).toUpperCase();
-
     // Concatenate the initials
     const initials = firstInitial + lastInitial;
 

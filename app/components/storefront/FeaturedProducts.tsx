@@ -1,9 +1,11 @@
 import prisma from "@/app/lib/db";
 import { LoadingProductCard, ProductCard } from "./ProductCard";
 import { Suspense } from "react";
+import { unstable_noStore as noStore } from "next/cache";
 
 async function getData() {
   // await new Promise((resolve) => setTimeout(resolve, 3000));
+  noStore();
   const data = await prisma.product.findMany({
     where: {
       status: "published",

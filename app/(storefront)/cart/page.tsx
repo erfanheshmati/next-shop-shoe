@@ -37,8 +37,8 @@ export default async function CartRoute() {
             Shopping cart is empty!
           </h2>
           <p className="mb-8 mt-2 text-center text-sm leading-6 text-muted-foreground max-w-sm">
-            You currently don't have any products in your cart. Please add some
-            so that you can see them right here.
+            You currently don not have any products in your cart. Please add
+            some so that you can see them right here.
           </p>
           <Button asChild>
             <Link href="/">Shop Now</Link>
